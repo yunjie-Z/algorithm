@@ -19,14 +19,55 @@ package com.zyj.string;
 public class longestPalindrome {
 
     public static void main(String[] args) {
-        System.out.println(centerExpansion("sabadab"));
+        //System.out.println(centerExpansion("sabadab"));
+        System.out.println(dynamicProgramming("babad"));
     }
 
     /**
      * 动态规划
      */
     public static String dynamicProgramming(String s){
-        return "";
+        int len = s.length();
+        if(len < 2){
+            return s;
+        }
+        int maxLen = 1;
+        int begin = 0;
+        //dp[i][j] 表示s[i...j]是否是回文串
+        boolean[][] dp = new boolean[len][len];
+        for (int i = 0; i < len; i++) {
+            dp[i][i] = true;
+        }
+        char[] chars = s.toCharArray();
+
+        //递推开始
+        //先枚举子串长度
+        for (int l = 2; l <= len; l++) {
+            //枚举左边界，左边界的上限设置可以宽松一些
+            for (int i = 0; i < len; i++) {
+                // 由l和i确定右边界，即j-i+1=l
+                int j = l+i-1;
+                if(j>=len){
+                    break;
+                }
+                if(chars[i]!=chars[j]){
+                    dp[i][j] = false;
+                }else {
+                    if(j-i<3){
+                        dp[i][j] = true;
+                    }else {
+                        dp[i][j] = dp[i+1][j-1];
+                    }
+                }
+
+                if(dp[i][j] &&j-i+1>maxLen){
+                    maxLen=j-i+1;
+                    begin = i;
+                }
+            }
+        }
+        return s.substring(begin,begin+maxLen);
+
     }
 
     /**
